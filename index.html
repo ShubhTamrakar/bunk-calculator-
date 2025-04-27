@@ -19,7 +19,7 @@
         }
         h2 {
             margin-bottom: 20px;
-            color: #8B0000;
+            color: #FF0000;
             font-size: 2em;
             text-shadow: 2px 2px 4px black;
         }
@@ -45,12 +45,12 @@
             margin-bottom: 4px;
             font-weight: bold;
             font-size: 0.9rem;
-            color: #8B0000;
+            color: #FF0000;
         }
         input {
             padding: 8px;
             border-radius: 8px;
-            border: 2px solid #8B0000;
+            border: 2px solid #FF0000;
             background: #fff;
             color: #333333;
             font-size: 0.9rem;
@@ -64,7 +64,7 @@
             padding: 10px;
             margin-top: 10px;
             width: 100%;
-            background: #8B0000;
+            background: #FF0000;
             border: none;
             border-radius: 8px;
             font-weight: bold;
@@ -104,7 +104,7 @@
         }
         .output-group div {
             font-weight: bold;
-            color: #8B0000;
+            color: #FF0000;
         }
         .total-absent-group {
             display: flex;
@@ -120,7 +120,7 @@
             bottom: 10px;
             right: 15px;
             font-size: 0.8rem;
-            color: #8B0000;
+            color: #FF0000;
             font-family: 'Poppins', sans-serif;
             opacity: 0.8;
         }
@@ -184,7 +184,7 @@
         </div>
 
         <div class="input-group">
-            <label for="bunkDays" style="font-weight:bold; font-size:1rem; color:#8B0000; text-decoration: underline;">Add More Bunks 🚀:</label>
+            <label for="bunkDays" style="font-weight:bold; font-size:1rem; color:#FF0000; text-decoration: underline;">Add More Bunks 🚀:</label>
             <div class="side-by-side">
                 <input type="number" id="bunkDays" placeholder="Bunk Days">
                 <input type="number" id="bunkLectures" placeholder="Bunk Lectures">
@@ -233,12 +233,12 @@
         }
 
         function calculate() {
-            const totalAbsent = parseFloat(document.getElementById('totalAbsent').value);
-            const totalOAA = parseFloat(document.getElementById('totalOAA').value);
+            const totalAbsent = parseFloat(document.getElementById('totalAbsent').value) || 0;
+            const totalOAA = parseFloat(document.getElementById('totalOAA').value) || 0;
             const totalLecture = parseFloat(document.getElementById('totalLecture').value);
 
-            if (isNaN(totalAbsent) || isNaN(totalOAA) || isNaN(totalLecture) || totalLecture === 0) {
-                document.getElementById('result').innerText = "Please enter valid numbers (Total Lecture cannot be zero).";
+            if (isNaN(totalLecture) || totalLecture === 0) {
+                document.getElementById('result').innerText = "Please enter valid Total Lecture (cannot be zero).";
                 return;
             }
 
@@ -247,14 +247,34 @@
 
             let resultText = `Current Attendance: ${currentAttendance.toFixed(2)}%`;
 
+            // 90% Calculation
             if (currentAttendance >= 90) {
-                resultText += "<br>ENJOY MAN";
+                const maxAbsents = (10 / 100) * totalLecture + totalOAA;
+                const canBunk = Math.floor(maxAbsents - totalAbsent);
+                const canBunkDays = Math.floor(canBunk / 8);
+
+                resultText += `<br>You can bunk approx ${canBunk} lectures (~${canBunkDays} days) to stay above 90%.`;
             } else {
                 const requiredLectures = (effectiveAbsent * 100) / (100 - 90);
                 const lecturesToAdd = requiredLectures - totalLecture;
                 const daysNeeded = Math.ceil(lecturesToAdd / 8);
 
-                resultText += `<br>Days needed to maintain 90%: ${daysNeeded} day${daysNeeded > 1 ? 's' : ''}`;
+                resultText += `<br>Days needed to reach 90%: ${daysNeeded} day${daysNeeded > 1 ? 's' : ''}`;
+            }
+
+            // 97% Calculation
+            if (currentAttendance >= 97) {
+                const maxAbsents97 = (3 / 100) * totalLecture + totalOAA;
+                const canBunk97 = Math.floor(maxAbsents97 - totalAbsent);
+                const canBunkDays97 = Math.floor(canBunk97 / 8);
+
+                resultText += `<br>You can bunk approx ${canBunk97} lectures (~${canBunkDays97} days) to stay above 97%.`;
+            } else {
+                const requiredLectures97 = (effectiveAbsent * 100) / (100 - 97);
+                const lecturesToAdd97 = requiredLectures97 - totalLecture;
+                const daysNeeded97 = Math.ceil(lecturesToAdd97 / 8);
+
+                resultText += `<br>Days needed to reach 97%: ${daysNeeded97} day${daysNeeded97 > 1 ? 's' : ''}`;
             }
 
             document.getElementById('result').innerHTML = resultText;
