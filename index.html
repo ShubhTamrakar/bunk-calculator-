@@ -88,7 +88,12 @@
             gap: 10px;
         }
         .side-by-side input {
-            flex: 1;
+            flex: 1 1 45%;
+            min-width: 120px;
+            height: 50px;
+            text-align: center;
+            font-size: 1rem;
+            border-radius: 8px;
         }
         .output-group {
             display: flex;
@@ -108,7 +113,6 @@
             width: 150px;
             margin-right: 10px;
         }
-        /* Signature at bottom right */
         .signature {
             position: fixed;
             bottom: 10px;
@@ -148,7 +152,7 @@
         </div>
 
         <div class="input-group">
-            <label>Add More Bunks:</label>
+            <label for="bunkDays" style="font-weight:bold; font-size:1rem; color:#8B0000; text-decoration: underline;">Add More Bunks 🚀:</label>
             <div class="side-by-side">
                 <input type="number" id="bunkDays" placeholder="Bunk Days">
                 <input type="number" id="bunkLectures" placeholder="Bunk Lectures">
@@ -160,7 +164,6 @@
         <div id="result"></div>
     </div>
 
-    <!-- Signature -->
     <div class="signature">~by SHUBH</div>
 
     <script>
@@ -176,26 +179,21 @@
             let currentTotalAbsent = parseFloat(totalAbsentInput.value) || 0;
             let currentTotalLecture = parseFloat(totalLectureInput.value) || 0;
 
-            // Calculate absent increase
             const totalFromDays = bunkDays * 8;
             const totalFromLectures = bunkLectures;
 
-            // Update totals
             addedDays += bunkDays;
             addedLectures += (bunkDays * 8) + bunkLectures;
 
             const newTotalAbsent = currentTotalAbsent + totalFromDays + totalFromLectures;
             const newTotalLecture = currentTotalLecture + totalFromDays + bunkLectures;
 
-            // Update fields
             totalAbsentInput.value = newTotalAbsent;
             totalLectureInput.value = newTotalLecture;
 
-            // Update display
             document.getElementById('totalAbsentDays').innerText = `Days Added: ${addedDays}`;
             document.getElementById('totalAbsentLectures').innerText = `Lectures Added: ${addedLectures}`;
 
-            // Clear input
             document.getElementById('bunkDays').value = '';
             document.getElementById('bunkLectures').value = '';
 
@@ -220,7 +218,6 @@
             if (currentAttendance >= 90) {
                 resultText += "<br>Days to attend to maintain 90% attendance: NA";
             } else {
-                // How many days needed?
                 const requiredLectures = (effectiveAbsent * 100) / (100 - 90);
                 const lecturesToAdd = requiredLectures - totalLecture;
                 const daysNeeded = Math.ceil(lecturesToAdd / 8);
@@ -235,9 +232,11 @@
             const ids = ['totalLecture', 'totalAbsent', 'totalOAA', 'bunkDays', 'bunkLectures'];
             let currentIndex = ids.indexOf(currentId);
 
-            if (event.key === "ArrowDown") {
+            if (event.key === "ArrowDown" || event.key === "Enter") {
                 event.preventDefault();
-                if (currentIndex < ids.length - 1) {
+                if (currentId === 'bunkDays' || currentId === 'bunkLectures') {
+                    addBunksAndCalculate();
+                } else if (currentIndex < ids.length - 1) {
                     document.getElementById(ids[currentIndex + 1]).focus();
                 }
             } else if (event.key === "ArrowUp") {
@@ -245,22 +244,12 @@
                 if (currentIndex > 0) {
                     document.getElementById(ids[currentIndex - 1]).focus();
                 }
-            } else if (event.key === "ArrowRight" && (currentId === 'bunkDays')) {
+            } else if (event.key === "ArrowRight" && currentId === 'bunkDays') {
                 event.preventDefault();
                 document.getElementById('bunkLectures').focus();
-            } else if (event.key === "ArrowLeft" && (currentId === 'bunkLectures')) {
+            } else if (event.key === "ArrowLeft" && currentId === 'bunkLectures') {
                 event.preventDefault();
                 document.getElementById('bunkDays').focus();
-            } else if (event.key === "Enter") {
-                if (currentId === 'bunkDays' || currentId === 'bunkLectures') {
-                    addBunksAndCalculate();
-                } else if (currentId === 'totalLecture') {
-                    document.getElementById('totalAbsent').focus();
-                } else if (currentId === 'totalAbsent') {
-                    document.getElementById('totalOAA').focus();
-                } else if (currentId === 'totalOAA') {
-                    document.getElementById('bunkDays').focus();
-                }
             }
         }
 
