@@ -194,6 +194,13 @@
     let addedDays = 0;
     let addedLectures = 0;
 
+    function resetCounters() {
+      addedDays = 0;
+      addedLectures = 0;
+      document.getElementById('totalAbsentDays').innerText = `Days Added: 0`;
+      document.getElementById('totalAbsentLectures').innerText = `Lectures Added: 0`;
+    }
+
     function addBunksAndCalculate() {
       const bunkDays = parseFloat(document.getElementById('bunkDays').value) || 0;
       const bunkLectures = parseFloat(document.getElementById('bunkLectures').value) || 0;
@@ -286,6 +293,11 @@
         document.getElementById('bunkDays').focus();
       }
     }
+
+    // Add event listeners to reset counters when main inputs change
+    document.getElementById('totalLecture').addEventListener('input', resetCounters);
+    document.getElementById('totalAbsent').addEventListener('input', resetCounters);
+    document.getElementById('totalOAA').addEventListener('input', resetCounters);
 
     const fields = ['totalLecture', 'totalAbsent', 'totalOAA', 'bunkDays', 'bunkLectures'];
     fields.forEach(id => {
