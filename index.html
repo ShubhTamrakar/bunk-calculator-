@@ -1,309 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Attendance Calculator</title>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: url('https://psitche.ac.in/assets/slider/building.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: #ecf0f1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 40px 20px;
-      box-sizing: border-box;
-    }
-    h2 {
-      margin-bottom: 20px;
-      color: #FF0000;
-      font-size: 2em;
-      text-shadow: 2px 2px 4px black;
-    }
-    .container {
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.9);
-      width: 100%;
-      max-width: 380px;
-      transform: scale(1.05);
-      transition: transform 0.3s ease-in-out;
-      background: #f8f8f8;
-    }
-    .container:hover {
-      transform: scale(1.1);
-    }
-    .input-group {
-      margin-bottom: 15px;
-      display: flex;
-      flex-direction: column;
-    }
-    label {
-      margin-bottom: 4px;
-      font-weight: bold;
-      font-size: 0.9rem;
-      color: #FF0000;
-    }
-    input {
-      padding: 8px;
-      border-radius: 8px;
-      border: 2px solid #FF0000;
-      background: #fff;
-      color: #333333;
-      font-size: 0.9rem;
-      outline: none;
-    }
-    input:focus {
-      border-color: #e74c3c;
-      background: #f2f2f2;
-    }
-    button {
-      padding: 10px;
-      margin-top: 10px;
-      width: 100%;
-      background: #FF0000;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 1rem;
-      color: #ffffff;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    button:hover {
-      background: #c0392b;
-    }
-    #result {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: #e74c3c;
-      text-shadow: 1px 1px 2px black;
-    }
-    .side-by-side {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .side-by-side input {
-      flex: 1 1 45%;
-      min-width: 120px;
-      height: 50px;
-      text-align: center;
-      font-size: 1rem;
-      border-radius: 8px;
-    }
-    .output-group {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-    }
-    .output-group div {
-      font-weight: bold;
-      color: #FF0000;
-    }
-    .total-absent-group {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .total-absent-group input {
-      width: 150px;
-      margin-right: 10px;
-    }
-    .signature {
-      position: fixed;
-      bottom: 10px;
-      right: 15px;
-      font-size: 0.8rem;
-      color: #FF0000;
-      font-family: 'Poppins', sans-serif;
-      opacity: 0.8;
-    }
-    @media (max-width: 600px) {
-      .container {
-        width: 90%;
-        padding: 15px;
-      }
-      h2 {
-        font-size: 1.8em;
-      }
-      input, button {
-        font-size: 1rem;
-        padding: 10px;
-      }
-      .side-by-side input {
-        font-size: 1.1rem;
-        padding: 12px;
-      }
-      #result {
-        font-size: 1.2rem;
-      }
-      .total-absent-group input {
-        width: 100px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Calculators</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        
+        /* Main container */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        /* Tab buttons */
+        .tab-header {
+            display: flex;
+            background-color: #f1f1f1;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: clamp(14px, 2vw, 18px);
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+        }
+        
+        .tab-button:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .tab-button.active {
+            background-color: #FF0000;
+            color: white;
+        }
+        
+        /* Tab content area */
+        .tab-content-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 50px);
+        }
+        
+        .tab-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            border: none;
+            background: white;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Full-screen iframe */
+        .tab-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .tab-button {
+                padding: 12px 8px;
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-  <h2>Attendance Calculator</h2>
-
-  <div class="container">
-    <div class="input-group">
-      <label for="totalLecture">Total Lecture:</label>
-      <input type="number" id="totalLecture" placeholder="Enter Total Lecture">
+    <div class="app-container">
+        <div class="tab-header">
+            <button class="tab-button active" onclick="openTab(event, 'bunk-calculator')">Bunk Calculator</button>
+            <button class="tab-button" onclick="openTab(event, 'days-calculator')">Days Calculator</button>
+        </div>
+        
+        <div class="tab-content-container">
+            <div id="bunk-calculator" class="tab-content active">
+                <iframe src="index_original.html" title="Bunk Calculator"></iframe>
+            </div>
+            
+            <div id="days-calculator" class="tab-content">
+                <iframe src="retry1.html" title="Days Calculator"></iframe>
+            </div>
+        </div>
     </div>
 
-    <div class="total-absent-group">
-      <div class="input-group">
-        <label for="totalAbsent">Total Absent (Current):</label>
-        <input type="number" id="totalAbsent" placeholder="Enter Total Absent">
-      </div>
-      <div class="output-group">
-        <div id="totalAbsentDays">Days Added: 0</div>
-        <div id="totalAbsentLectures">Lectures Added: 0</div>
-      </div>
-    </div>
-
-    <div class="input-group">
-      <label for="totalOAA">Total OAA:</label>
-      <input type="number" id="totalOAA" placeholder="Enter Total OAA">
-    </div>
-
-    <div class="input-group">
-      <label for="bunkDays" style="font-weight:bold; font-size:1rem; color:#FF0000; text-decoration: underline;">Add More Bunks 🚀:</label>
-      <div class="side-by-side">
-        <input type="number" id="bunkDays" placeholder="Bunk Days">
-        <input type="number" id="bunkLectures" placeholder="Bunk Lectures">
-      </div>
-    </div>
-
-    <button onclick="addBunksAndCalculate()">Add Bunks and Calculate</button>
-
-    <div id="result"></div>
-  </div>
-
-  <div class="signature">~by SHUBH</div>
-
-  <script>
-    let addedDays = 0;
-    let addedLectures = 0;
-
-    function resetCounters() {
-      addedDays = 0;
-      addedLectures = 0;
-      document.getElementById('totalAbsentDays').innerText = `Days Added: 0`;
-      document.getElementById('totalAbsentLectures').innerText = `Lectures Added: 0`;
-    }
-
-    function addBunksAndCalculate() {
-      const bunkDays = parseFloat(document.getElementById('bunkDays').value) || 0;
-      const bunkLectures = parseFloat(document.getElementById('bunkLectures').value) || 0;
-      const totalAbsentInput = document.getElementById('totalAbsent');
-      const totalLectureInput = document.getElementById('totalLecture');
-
-      let currentTotalAbsent = parseFloat(totalAbsentInput.value) || 0;
-      let currentTotalLecture = parseFloat(totalLectureInput.value) || 0;
-
-      const totalFromDays = bunkDays * 8;
-      const totalFromLectures = bunkLectures;
-
-      addedDays += bunkDays;
-      addedLectures += totalFromDays + totalFromLectures;
-
-      const newTotalAbsent = currentTotalAbsent + totalFromDays + totalFromLectures;
-      const newTotalLecture = currentTotalLecture + totalFromDays + totalFromLectures;
-
-      totalAbsentInput.value = newTotalAbsent;
-      totalLectureInput.value = newTotalLecture;
-
-      document.getElementById('totalAbsentDays').innerText = `Days Added: ${addedDays}`;
-      document.getElementById('totalAbsentLectures').innerText = `Lectures Added: ${addedLectures}`;
-
-      document.getElementById('bunkDays').value = '';
-      document.getElementById('bunkLectures').value = '';
-
-      calculate();
-    }
-
-    function calculate() {
-      const totalAbsent = parseFloat(document.getElementById('totalAbsent').value) || 0;
-      const totalOAA = parseFloat(document.getElementById('totalOAA').value) || 0;
-      const totalLecture = parseFloat(document.getElementById('totalLecture').value);
-
-      if (isNaN(totalLecture) || totalLecture === 0) {
-        document.getElementById('result').innerText = "Please enter a valid Total Lecture.";
-        return;
-      }
-
-      const effectiveAbsent = totalAbsent - totalOAA;
-      const currentAttendance = 100 - ((effectiveAbsent / totalLecture) * 100);
-
-      let resultText = `Current Attendance: ${currentAttendance.toFixed(2)}%`;
-
-      // 90% Check
-      if (currentAttendance >= 90) {
-        resultText += "<br>You are safe for 90%! 🎉";
-      } else {
-        const requiredLectures90 = (effectiveAbsent * 100) / (100 - 90);
-        const lecturesToAdd90 = requiredLectures90 - totalLecture;
-        const daysNeeded90 = Math.ceil(lecturesToAdd90 / 8);
-        resultText += `<br>Days needed for 90%: ${daysNeeded90}`;
-      }
-
-      // 97% Check
-      if (currentAttendance >= 97) {
-        resultText += "<br>You are safe for 97%! 🚀";
-      } else {
-        const requiredLectures97 = (effectiveAbsent * 100) / (100 - 97);
-        const lecturesToAdd97 = requiredLectures97 - totalLecture;
-        const daysNeeded97 = Math.ceil(lecturesToAdd97 / 8);
-        resultText += `<br>Days needed for 97%: ${daysNeeded97}`;
-      }
-
-      document.getElementById('result').innerHTML = resultText;
-    }
-
-    function handleKeyNavigation(event, currentId) {
-      const ids = ['totalLecture', 'totalAbsent', 'totalOAA', 'bunkDays', 'bunkLectures'];
-      let currentIndex = ids.indexOf(currentId);
-
-      if (event.key === "ArrowDown" || event.key === "Enter") {
-        event.preventDefault();
-        if (currentId === 'bunkDays' || currentId === 'bunkLectures') {
-          addBunksAndCalculate();
-        } else if (currentIndex < ids.length - 1) {
-          document.getElementById(ids[currentIndex + 1]).focus();
+    <script>
+        function openTab(evt, tabName) {
+            // Hide all tab contents
+            var tabContents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            // Remove active class from all buttons
+            var tabButtons = document.getElementsByClassName("tab-button");
+            for (var i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("active");
+            }
+            
+            // Show the current tab and add active class to the button
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            
+            // Force iframe resize
+            resizeIframe(tabName);
         }
-      } else if (event.key === "ArrowUp") {
-        event.preventDefault();
-        if (currentIndex > 0) {
-          document.getElementById(ids[currentIndex - 1]).focus();
+        
+        function resizeIframe(tabName) {
+            var iframe = document.getElementById(tabName).querySelector('iframe');
+            // Reset height first
+            iframe.style.height = "100%";
+            
+            // Add a small delay to ensure content is loaded
+            setTimeout(function() {
+                try {
+                    // Try to get content height
+                    var body = iframe.contentWindow.document.body;
+                    var html = iframe.contentWindow.document.documentElement;
+                    var height = Math.max(
+                        body.scrollHeight,
+                        body.offsetHeight,
+                        html.clientHeight,
+                        html.scrollHeight,
+                        html.offsetHeight
+                    );
+                    
+                    // Set iframe height (with minimum of viewport height)
+                    iframe.style.height = Math.max(height, window.innerHeight - 50) + "px";
+                } catch (e) {
+                    // Fallback to 100% height if cross-origin issues occur
+                    iframe.style.height = "100%";
+                }
+            }, 100);
         }
-      } else if (event.key === "ArrowRight" && currentId === 'bunkDays') {
-        event.preventDefault();
-        document.getElementById('bunkLectures').focus();
-      } else if (event.key === "ArrowLeft" && currentId === 'bunkLectures') {
-        event.preventDefault();
-        document.getElementById('bunkDays').focus();
-      }
-    }
-
-    // Add event listeners to reset counters when main inputs change
-    document.getElementById('totalLecture').addEventListener('input', resetCounters);
-    document.getElementById('totalAbsent').addEventListener('input', resetCounters);
-    document.getElementById('totalOAA').addEventListener('input', resetCounters);
-
-    const fields = ['totalLecture', 'totalAbsent', 'totalOAA', 'bunkDays', 'bunkLectures'];
-    fields.forEach(id => {
-      document.getElementById(id).addEventListener('keydown', (e) => handleKeyNavigation(e, id));
-    });
-  </script>
-
+        
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial active iframe height
+            resizeIframe('bunk-calculator');
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                var activeTab = document.querySelector('.tab-content.active');
+                if (activeTab) {
+                    resizeIframe(activeTab.id);
+                }
+            });
+            
+            // Handle iframe content changes
+            setInterval(function() {
+                var activeTab = document.querySelector('.tab-content.active');
+                if (activeTab) {
+                    resizeIframe(activeTab.id);
+                }
+            }, 500);
+        });
+    </script>
 </body>
 </html>
