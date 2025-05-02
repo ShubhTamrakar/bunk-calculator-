@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Calculator</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('https://psitche.ac.in/assets/slider/building.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #ecf0f1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+      box-sizing: border-box;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #FF0000;
+      font-size: 2em;
+      text-shadow: 2px 2px 4px black;
+    }
+    .container {
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.9);
+      width: 100%;
+      max-width: 380px;
+      transform: scale(1.05);
+      transition: transform 0.3s ease-in-out;
+      background: #f8f8f8;
+    }
+    .container:hover {
+      transform: scale(1.1);
+    }
+    .input-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-bottom: 4px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #FF0000;
+    }
+    input {
+      padding: 8px;
+      border-radius: 8px;
+      border: 2px solid #FF0000;
+      background: #fff;
+      color: #333333;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    input:focus {
+      border-color: #e74c3c;
+      background: #f2f2f2;
+    }
+    button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      background: #FF0000;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #ffffff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #c0392b;
+    }
+    #result {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #e74c3c;
+      text-shadow: 1px 1px 2px black;
+    }
+    .side-by-side {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .side-by-side input {
+      flex: 1 1 45%;
+      min-width: 120px;
+      height: 50px;
+      text-align: center;
+      font-size: 1rem;
+      border-radius: 8px;
+    }
+    .output-group {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    .output-group div {
+      font-weight: bold;
+      color: #FF0000;
+    }
+    .total-absent-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .total-absent-group input {
+      width: 150px;
+      margin-right: 10px;
+    }
+    .signature {
+      position: fixed;
+      bottom: 10px;
+      right: 15px;
+      font-size: 0.8rem;
+      color: #FF0000;
+      font-family: 'Poppins', sans-serif;
+      opacity: 0.8;
+    }
+    @media (max-width: 600px) {
+      .container {
+        width: 90%;
+        padding: 15px;
+      }
+      h2 {
+        font-size: 1.8em;
+      }
+      input, button {
+        font-size: 1rem;
+        padding: 10px;
+      }
+      .side-by-side input {
+        font-size: 1.1rem;
+        padding: 12px;
+      }
+      #result {
+        font-size: 1.2rem;
+      }
+      .total-absent-group input {
+        width: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Attendance Calculator</h2>
+
+  <div class="container">
+    <div class="input-group">
+      <label for="totalLecture">Total Lecture:</label>
+      <input type="number" id="totalLecture" placeholder="Enter Total Lecture">
+    </div>
+
+    <div class="total-absent-group">
+      <div class="input-group">
+        <label for="totalAbsent">Total Absent (Current):</label>
+        <input type="number" id="totalAbsent" placeholder="Enter Total Absent">
+      </div>
+      <div class="output-group">
+        <div id="totalAbsentDays">Days Added: 0</div>
+        <div id="totalAbsentLectures">Lectures Added: 0</div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label for="totalOAA">Total OAA:</label>
+      <input type="number" id="totalOAA" placeholder="Enter Total OAA">
+    </div>
+
+    <div class="input-group">
+      <label for="bunkDays" style="font-weight:bold; font-size:1rem; color:#FF0000; text-decoration: underline;">Add More Bunks 🚀:</label>
+      <div class="side-by-side">
+        <input type="number" id="bunkDays" placeholder="Bunk Days">
+        <input type="number" id="bunkLectures" placeholder="Bunk Lectures">
+      </div>
+    </div>
+
+    <button onclick="addBunksAndCalculate()">Add Bunks and Calculate</button>
+
+    <div id="result"></div>
+  </div>
+
+  <div class="signature">~by SHUBH</div>
+
+  <script>
+    let addedDays = 0;
+    let addedLectures = 0;
+
+    function resetCounters() {
+      addedDays = 0;
+      addedLectures = 0;
+      document.getElementById('totalAbsentDays').innerText = `Days Added: 0`;
+      document.getElementById('totalAbsentLectures').innerText = `Lectures Added: 0`;
+    }
+
+    function addBunksAndCalculate() {
+      const bunkDays = parseFloat(document.getElementById('bunkDays').value) || 0;
+      const bunkLectures = parseFloat(document.getElementById('bunkLectures').value) || 0;
+      const totalAbsentInput = document.getElementById('totalAbsent');
+      const totalLectureInput = document.getElementById('totalLecture');
+
+      let currentTotalAbsent = parseFloat(totalAbsentInput.value) || 0;
+      let currentTotalLecture = parseFloat(totalLectureInput.value) || 0;
+
+      const totalFromDays = bunkDays * 8;
+      const totalFromLectures = bunkLectures;
+
+      addedDays += bunkDays;
+      addedLectures += totalFromDays + totalFromLectures;
+
+      const newTotalAbsent = currentTotalAbsent + totalFromDays + totalFromLectures;
+      const newTotalLecture = currentTotalLecture + totalFromDays + totalFromLectures;
+
+      totalAbsentInput.value = newTotalAbsent;
+      totalLectureInput.value = newTotalLecture;
+
+      document.getElementById('totalAbsentDays').innerText = `Days Added: ${addedDays}`;
+      document.getElementById('totalAbsentLectures').innerText = `Lectures Added: ${addedLectures}`;
+
+      document.getElementById('bunkDays').value = '';
+      document.getElementById('bunkLectures').value = '';
+
+      calculate();
+    }
+
+    function calculate() {
+      const totalAbsent = parseFloat(document.getElementById('totalAbsent').value) || 0;
+      const totalOAA = parseFloat(document.getElementById('totalOAA').value) || 0;
+      const totalLecture = parseFloat(document.getElementById('totalLecture').value);
+
+      if (isNaN(totalLecture) || totalLecture === 0) {
+        document.getElementById('result').innerText = "Please enter a valid Total Lecture.";
+        return;
+      }
+
+      const effectiveAbsent = totalAbsent - totalOAA;
+      const currentAttendance = 100 - ((effectiveAbsent / totalLecture) * 100);
+
+      let resultText = `Current Attendance: ${currentAttendance.toFixed(2)}%`;
+
+      // 90% Check
+      if (currentAttendance >= 90) {
+        resultText += "<br>You are safe for 90%! 🎉";
+      } else {
+        const requiredLectures90 = (effectiveAbsent * 100) / (100 - 90);
+        const lecturesToAdd90 = requiredLectures90 - totalLecture;
+        const daysNeeded90 = Math.ceil(lecturesToAdd90 / 8);
+        resultText += `<br>Days needed for 90%: ${daysNeeded90}`;
+      }
+
+      // 97% Check
+      if (currentAttendance >= 97) {
+        resultText += "<br>You are safe for 97%! 🚀";
+      } else {
+        const requiredLectures97 = (effectiveAbsent * 100) / (100 - 97);
+        const lecturesToAdd97 = requiredLectures97 - totalLecture;
+        const daysNeeded97 = Math.ceil(lecturesToAdd97 / 8);
+        resultText += `<br>Days needed for 97%: ${daysNeeded97}`;
+      }
+
+      document.getElementById('result').innerHTML = resultText;
+    }
+
+    function handleKeyNavigation(event, currentId) {
+      const ids = ['totalLecture', 'totalAbsent', 'totalOAA', 'bunkDays', 'bunkLectures'];
+      let currentIndex = ids.indexOf(currentId);
+
+      if (event.key === "ArrowDown" || event.key === "Enter") {
+        event.preventDefault();
+        if (currentId === 'bunkDays' || currentId === 'bunkLectures') {
+          addBunksAndCalculate();
+        } else if (currentIndex < ids.length - 1) {
+          document.getElementById(ids[currentIndex + 1]).focus();
+        }
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        if (currentIndex > 0) {
+          document.getElementById(ids[currentIndex - 1]).focus();
+        }
+      } else if (event.key === "ArrowRight" && currentId === 'bunkDays') {
+        event.preventDefault();
+        document.getElementById('bunkLectures').focus();
+      } else if (event.key === "ArrowLeft" && currentId === 'bunkLectures') {
+        event.preventDefault();
+        document.getElementById('bunkDays').focus();
+      }
+    }
+
+    // Add event listeners to reset counters when main inputs change
+    document.getElementById('totalLecture').addEventListener('input', resetCounters);
+    document.getElementById('totalAbsent').addEventListener('input', resetCounters);
+    document.getElementById('totalOAA').addEventListener('input', resetCounters);
+
+    const fields = ['totalLecture', 'totalAbsent', 'totalOAA', 'bunkDays', 'bunkLectures'];
+    fields.forEach(id => {
+      document.getElementById(id).addEventListener('keydown', (e) => handleKeyNavigation(e, id));
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bunk Days Calculator</title>
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: rgba(245, 247, 255, 0.9);
+            --accent-color: #ff6b6b;
+            --text-color: #333;
+            --light-text: #666;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-image: url('https://psitche.ac.in/assets/psit-bulding.webp');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: var(--secondary-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            backdrop-filter: blur(2px);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+        
+        .description {
+            text-align: center;
+            color: var(--light-text);
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .optional-label {
+            color: var(--light-text);
+            font-weight: 400;
+        }
+        
+        input[type="number"],
+        input[type="date"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: border 0.3s;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        input[type="number"]:focus,
+        input[type="date"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.1);
+            background-color: white;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #3a5bef;
+        }
+        
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            display: none;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .result-item {
+            margin-bottom: 10px;
+        }
+        
+        .highlight {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        
+        .emoji {
+            font-size: 18px;
+            margin-right: 5px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--light-text);
+            font-size: 13px;
+        }
+        
+        .key-hint {
+            font-size: 12px;
+            color: var(--light-text);
+            margin-top: 5px;
+        }
+        
+        .cant-bunk {
+            color: #ff4757;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 20px;
+            }
+            
+            body {
+                padding: 10px;
+                align-items: flex-start;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Bunk Days Calculator</h1>
+        <p class="description">Calculate how many days you can bunk while maintaining 90% attendance</p>
+        
+        <div class="form-group">
+            <label for="totalLecturesTillToday">Total lectures attended till today:</label>
+            <input type="number" id="totalLecturesTillToday" placeholder="Enter number of lectures you've attended" min="0" tabindex="1">
+            <div class="key-hint">Press Enter to move to next field, Arrow keys to navigate</div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="absentLectures" class="optional-label">Absent Lectures (optional):</label>
+                <input type="number" id="absentLectures" placeholder="Enter absent lectures" min="0" tabindex="2">
+            </div>
+            <div class="form-group">
+                <label for="oaaLectures" class="optional-label">OAA Lectures (optional):</label>
+                <input type="number" id="oaaLectures" placeholder="Enter OAA lectures" min="0" tabindex="3">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="endDate">Semester end date:</label>
+            <input type="date" id="endDate" tabindex="4">
+            <div class="key-hint">Press Enter to calculate, Shift+Enter to reset</div>
+        </div>
+        
+        <button id="calculateBtn" onclick="calculateBunkDays()" tabindex="5">Calculate Bunkable Days (Enter)</button>
+        
+        <div id="result" tabindex="6">
+            <div class="result-title">📊 Your Attendance Analysis</div>
+            <div class="result-item" id="futureLectures"></div>
+            <div class="result-item" id="totalLectures"></div>
+            <div class="result-item" id="attendanceDetails"></div>
+            <div class="result-item" id="bunkDays"></div>
+        </div>
+        
+        <div class="footer">
+            Note: This calculator assumes 8 lectures per working day (Mon-Fri)
+        </div>
+<div class="footer">
+            **IT MIGHT NOT BE ACCURATE AS ANY HOLIDAYS ON WORKING DAYS ARE NOT BEING COUNTED FOR THE FUTURE LECTURES**
+        </div>
+
+    </div>
+
+    <script>
+        // Get DOM elements
+        const lecturesInput = document.getElementById('totalLecturesTillToday');
+        const absentInput = document.getElementById('absentLectures');
+        const oaaInput = document.getElementById('oaaLectures');
+        const endDateInput = document.getElementById('endDate');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultDiv = document.getElementById('result');
+        
+        // Set up tab order
+        const tabOrder = [lecturesInput, absentInput, oaaInput, endDateInput, calculateBtn, resultDiv];
+        let currentTabIndex = 0;
+        
+        // Initialize - focus on first input
+        lecturesInput.focus();
+        
+        // Keyboard event listeners
+        document.addEventListener('keydown', function(e) {
+            // Handle arrow key navigation
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigate(-1); // Move to previous field
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigate(1); // Move to next field
+            }
+        });
+        
+        lecturesInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                navigate(1); // Move to next field
+            }
+        });
+        
+        absentInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                navigate(1); // Move to next field
+            }
+        });
+        
+        oaaInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                navigate(1); // Move to next field
+            }
+        });
+        
+        endDateInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    // Shift+Enter - reset form
+                    resetForm();
+                } else {
+                    // Regular Enter - calculate
+                    calculateBunkDays();
+                }
+            }
+        });
+        
+        calculateBtn.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                calculateBunkDays();
+            }
+        });
+        
+        // Navigation function
+        function navigate(direction) {
+            currentTabIndex += direction;
+            
+            // Wrap around if needed
+            if (currentTabIndex < 0) {
+                currentTabIndex = tabOrder.length - 1;
+            } else if (currentTabIndex >= tabOrder.length) {
+                currentTabIndex = 0;
+            }
+            
+            tabOrder[currentTabIndex].focus();
+            
+            // Special case for date input - open picker if available
+            if (tabOrder[currentTabIndex] === endDateInput && endDateInput.showPicker) {
+                endDateInput.showPicker();
+            }
+        }
+        
+        // Calculate function
+        function calculateBunkDays() {
+            // Get input values
+            let totalLecturesTillToday = parseInt(lecturesInput.value) || 0;
+            let absentLectures = parseInt(absentInput.value) || 0;
+            let oaaLectures = parseInt(oaaInput.value) || 0;
+            let endDateValue = endDateInput.value;
+
+            // Validate required inputs
+            if (isNaN(totalLecturesTillToday) || totalLecturesTillToday < 0) {
+                alert("Please enter a valid number of lectures attended!");
+                lecturesInput.focus();
+                currentTabIndex = 0;
+                return;
+            }
+
+            if (!endDateValue) {
+                alert("Please select an end date!");
+                endDateInput.focus();
+                currentTabIndex = 3;
+                return;
+            }
+
+            let today = new Date();
+            let endDate = new Date(endDateValue);
+
+            if (endDate <= today) {
+                alert("End date must be after today!");
+                endDateInput.focus();
+                currentTabIndex = 3;
+                return;
+            }
+
+            // Calculate working days (Mon-Fri) from TOMORROW to end date
+            let workingDays = 0;
+            let currentDate = new Date(today);
+            currentDate.setDate(currentDate.getDate() + 1); // Start from tomorrow
+            
+            // Reset time to avoid timezone issues
+            currentDate.setHours(0, 0, 0, 0);
+            endDate.setHours(0, 0, 0, 0);
+            
+            while (currentDate <= endDate) {
+                let day = currentDate.getDay();
+                if (day !== 0 && day !== 6) { // 0 = Sunday, 6 = Saturday
+                    workingDays++;
+                }
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            // Calculate lectures
+            const lecturesPerDay = 8;
+            let lecturesFromTomorrowToEnd = workingDays * lecturesPerDay;
+            let totalLectures = totalLecturesTillToday + lecturesFromTomorrowToEnd;
+            
+            // Calculate net absent lectures (absent - OAA)
+            let netAbsentLectures = Math.max(0, absentLectures - oaaLectures);
+            
+            // Calculate total attended lectures
+            let totalAttendedLectures = totalLecturesTillToday - netAbsentLectures;
+
+            // Calculate bunkable lectures (10% of total can be missed)
+            let maxMissableLectures = Math.floor(0.1 * totalLectures);
+            
+            // Calculate remaining bunkable lectures after accounting for net absent
+            let remainingBunkableLectures = Math.max(0, maxMissableLectures - netAbsentLectures);
+            
+            let bunkDays = Math.floor(remainingBunkableLectures / lecturesPerDay); // Whole days only
+            
+            // Calculate current attendance percentage
+            let currentAttendance = totalAttendedLectures / totalLectures * 100;
+            
+            // Display results
+            document.getElementById('futureLectures').innerHTML = 
+                `<span class="emoji">🔮</span> Future lectures: <span class="highlight">${lecturesFromTomorrowToEnd}</span> (${workingDays} working days × 8 lectures/day)`;
+            
+            document.getElementById('totalLectures').innerHTML = 
+                `<span class="emoji">📚</span> Total semester lectures: <span class="highlight">${totalLectures}</span> (attended + future)`;
+            
+            document.getElementById('attendanceDetails').innerHTML = 
+                `<span class="emoji">📝</span> Your attendance details: ` +
+                `<span class="highlight">${totalAttendedLectures}/${totalLectures}</span> ` +
+                `(<span class="highlight">${currentAttendance.toFixed(2)}%</span>) ` +
+                `(Net absent: <span class="highlight">${netAbsentLectures}</span>)`;
+            
+            if (remainingBunkableLectures < 1) {
+                document.getElementById('bunkDays').innerHTML = 
+                    `<span class="emoji">😢</span> <span class="cant-bunk">You can't bunk any lectures</span> (0% margin for attendance)`;
+            } else if (remainingBunkableLectures < 8) {
+                document.getElementById('bunkDays').innerHTML = 
+                    `<span class="emoji">😢</span> <span class="cant-bunk">You can't bunk any full days</span> ` +
+                    `(only ${remainingBunkableLectures} lecture${remainingBunkableLectures !== 1 ? 's' : ''} can be missed while keeping ≥90% attendance)`;
+            } else {
+                document.getElementById('bunkDays').innerHTML = 
+                    `<span class="emoji">✅</span> You can bunk: <span class="highlight">${bunkDays} day${bunkDays !== 1 ? 's' : ''}</span> ` +
+                    `(${remainingBunkableLectures} lectures) while keeping ≥90% attendance`;
+            }
+            
+            document.getElementById('result').style.display = 'block';
+            
+            // Focus the result div after showing results
+            currentTabIndex = 5;
+            resultDiv.focus();
+        }
+        
+        // Reset form function
+        function resetForm() {
+            lecturesInput.value = '';
+            absentInput.value = '';
+            oaaInput.value = '';
+            endDateInput.value = '';
+            document.getElementById('result').style.display = 'none';
+            currentTabIndex = 0;
+            lecturesInput.focus();
+        }
+    </script>
+</body>
+</html>
