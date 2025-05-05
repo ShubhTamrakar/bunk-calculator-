@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bunk Days Calculator</title>
     <style>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+document.onkeydown = function(e) {
+if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I")) {
+return false;
+}
+};
         :root {
             --primary-color: #4a6bff;
             --secondary-color: rgba(245, 247, 255, 0.9);
