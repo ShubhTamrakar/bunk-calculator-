@@ -147,6 +147,7 @@
         width: 100px;
       }
     }
+
   </style>
 </head>
 <body>
@@ -303,6 +304,12 @@
     fields.forEach(id => {
       document.getElementById(id).addEventListener('keydown', (e) => handleKeyNavigation(e, id));
     });
+    document.addEventListener('contextmenu', event => event.preventDefault());
+document.onkeydown = function(e) {
+if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I")) {
+return false;
+}
+};
   </script>
 
 </body>
