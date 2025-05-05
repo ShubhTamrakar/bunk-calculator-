@@ -124,6 +124,12 @@
     </div>
 
     <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+document.onkeydown = function(e) {
+if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I")) {
+return false;
+}
+};
         // Simple tab switching without dynamic resizing
         function openTab(evt, tabName) {
             // Hide all tab contents
